@@ -1,24 +1,74 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>M3U8 Player</title>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://unpkg.com/popper.js@1.12.3"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="home.css">
-        <script type="text/javascript" src="main.js"></script>
-    </head>
-    <body>
-        <div class="col-lg-6" id="text-box">
-            <h1 class="page-name">M3U8 Player</h1>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Paste the m3u8 link here" id="m3u8-placeholder">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" type="button" id="play-btn">Play</button>
-                </span>
-            </div>
-        </div>
-    </body>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firma Digital</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        canvas { border: 2px solid #000; display: block; margin: 20px auto; }
+        button { margin: 10px; padding: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h2>Firme en el recuadro</h2>
+    <canvas id="canvas" width="300" height="150"></canvas>
+    <br>
+    <button onclick="borrarFirma()">Borrar</button>
+    <button onclick="descargarFirma()">Descargar</button>
+    
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let dibujando = false;
+
+        canvas.addEventListener("mousedown", iniciarDibujo);
+        canvas.addEventListener("mousemove", dibujar);
+        canvas.addEventListener("mouseup", detenerDibujo);
+        canvas.addEventListener("mouseleave", detenerDibujo);
+
+        canvas.addEventListener("touchstart", iniciarDibujo);
+        canvas.addEventListener("touchmove", dibujar);
+        canvas.addEventListener("touchend", detenerDibujo);
+
+        function iniciarDibujo(e) {
+            e.preventDefault();
+            dibujando = true;
+            ctx.beginPath();
+            ctx.moveTo(getX(e), getY(e));
+        }
+
+        function dibujar(e) {
+            e.preventDefault();
+            if (!dibujando) return;
+            ctx.lineTo(getX(e), getY(e));
+            ctx.stroke();
+        }
+
+        function detenerDibujo() {
+            dibujando = false;
+            ctx.closePath();
+        }
+
+        function getX(e) {
+            return e.clientX || e.touches[0].clientX - canvas.offsetLeft;
+        }
+
+        function getY(e) {
+            return e.clientY || e.touches[0].clientY - canvas.offsetTop;
+        }
+
+        function borrarFirma() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function descargarFirma() {
+            const enlace = document.createElement("a");
+            enlace.href = canvas.toDataURL("image/png");
+            enlace.download = "firma.png";
+            enlace.click();
+        }
+    </script>
+</body>
 </html>
+
